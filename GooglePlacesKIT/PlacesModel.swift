@@ -4,3 +4,4 @@ struct Place{
     let name: String
     let id: String
 }
+

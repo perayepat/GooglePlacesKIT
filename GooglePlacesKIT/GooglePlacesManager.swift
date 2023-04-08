@@ -1,10 +1,6 @@
 import Foundation
 import GooglePlaces
 
-struct Place{
-    let name: String
-    let id: String
-}
 
 enum PlacesErrors: Error{
     case failedToFind
@@ -18,10 +14,6 @@ final class GooglePlacesManager{
     private init (){}
     
     
-    
-    public func setUp(){
-        GMSPlacesClient.provideAPIKey("AIzaSyCcyVr8-75zDXC6H9OFeDRj4XS5aP3182k")
-    }
     
     public func findPlaces(query: String, completion: @escaping (Result<[Place],Error>) -> Void){
         let filter = GMSAutocompleteFilter()
