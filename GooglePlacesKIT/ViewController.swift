@@ -8,7 +8,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Maps"
+        title = "+ PLACES +"
         view.addSubview(mapView)
         setSystemBar()
         //        searchVC.searchBar.backgroundColor = .secondarySystemBackground
@@ -20,22 +20,25 @@ class ViewController: UIViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-            mapView.frame = view.bounds
-//        mapView.frame = CGRect(x: 0,
-//                               y: view.safeAreaInsets.top,
-//                               width: view.frame.size.width,
-//                               height: view.frame.size.height - view.safeAreaInsets.top)
+        mapView.frame = view.bounds
+        //        mapView.frame = CGRect(x: 0,
+        //                               y: view.safeAreaInsets.top,
+        //                               width: view.frame.size.width,
+        //                               height: view.frame.size.height - view.safeAreaInsets.top)
     }
     
 }
 
-extension ViewController: UISearchResultsUpdating{
+extension ViewController: UISearchResultsUpdating, ResultsViewControllerDelegate{
     func updateSearchResults(for searchController: UISearchController) {
         guard let query = searchController.searchBar.text,
               !query.trimmingCharacters(in: .whitespaces).isEmpty,
-        let resultsVC = searchController.searchResultsController as? ResultsViewController else {
+              let resultsVC = searchController.searchResultsController as? ResultsViewController else {
             return
         }
+        
+        resultsVC.delegate = self
+        
         GooglePlacesManager.shared.findPlaces(query: query) { result in
             switch result {
             case .success(let places):
@@ -53,5 +56,20 @@ extension ViewController: UISearchResultsUpdating{
         let statusbarView = UIView(frame: frame)
         statusbarView.backgroundColor = UIColor.secondarySystemBackground
         view.addSubview(statusbarView)
+    }
+    
+    func didTapPlace(with coordinate: CLLocationCoordinate2D) {
+        searchVC.searchBar.resignFirstResponder()
+        searchVC.dismiss(animated: true)
+        /// Remove map pin
+        let annotations = mapView.annotations
+        mapView.removeAnnotations(annotations)
+        /// Add a map pin
+        let pin =  MKPointAnnotation()
+        pin.coordinate = coordinate
+        mapView.addAnnotation(pin)
+        mapView.setRegion(MKCoordinateRegion(
+            center: coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)), animated: true)
     }
 }

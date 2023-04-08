@@ -1,8 +1,14 @@
 
 import UIKit
+import CoreLocation
+
+protocol ResultsViewControllerDelegate: AnyObject{
+    func didTapPlace(with coordinate: CLLocationCoordinate2D)
+}
 
 class ResultsViewController: UIViewController {
  
+    weak var delegate: ResultsViewControllerDelegate?
 
     private let tableView: UITableView = {
        let table = UITableView()
@@ -18,6 +24,7 @@ class ResultsViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(tableView)
         tableView.delegate = self
+        view.backgroundColor = .clear
         tableView.dataSource = self
     }
     
@@ -40,12 +47,26 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        print(places[indexPath.row].name)
+        
+        tableView.isHidden = true
+        
+        let place = places[indexPath.row]
+        GooglePlacesManager.shared.resolveLocation(for: place) { [weak self] result in
+            switch result {
+            case .success(let coordinate):
+                DispatchQueue.main.async {
+                    self?.delegate?.didTapPlace(with: coordinate)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }
 
 extension ResultsViewController{
     public func update(with places: [Place]){
+        self.tableView.isHidden = false
         self.places = places
         tableView.reloadData()
     }

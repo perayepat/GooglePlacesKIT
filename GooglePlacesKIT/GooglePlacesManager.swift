@@ -4,6 +4,7 @@ import GooglePlaces
 
 enum PlacesErrors: Error{
     case failedToFind
+    case locationCouldNotBeFound
 }
 
 final class GooglePlacesManager{
@@ -31,5 +32,23 @@ final class GooglePlacesManager{
             
             completion(.success(places))
         }
+    }
+    
+    public func resolveLocation(for place: Place, completion: @escaping (Result<CLLocationCoordinate2D, Error>) -> Void){
+        client.fetchPlace(fromPlaceID: place.id,
+                          placeFields: .coordinate,
+                          sessionToken: nil) { googlePlace, error in
+            guard let googlePlace = googlePlace, error == nil else {
+                completion(.failure(PlacesErrors.locationCouldNotBeFound))
+                return
+            }
+            
+            let coordinate = CLLocationCoordinate2D(
+                latitude: googlePlace.coordinate.latitude ,
+                longitude: googlePlace.coordinate.longitude)
+            
+            completion(.success(coordinate))
+        }
+        
     }
 }
