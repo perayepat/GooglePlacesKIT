@@ -42,5 +42,11 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource{
         tableView.deselectRow(at: indexPath, animated: true)
         print(places[indexPath.row].name)
     }
-    
+}
+
+extension ResultsViewController{
+    public func update(with places: [Place]){
+        self.places = places
+        tableView.reloadData()
+    }
 }
