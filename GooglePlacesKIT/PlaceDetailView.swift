@@ -1,12 +1,19 @@
 import SwiftUI
 
 struct PlaceDetailView: View {
+    var weekDays = ["Monday: 10:00 AM – 9:00 PM", "Tuesday: 10:00 AM – 9:00 PM", "Wednesday: 10:00 AM – 9:00 PM", "Thursday: 10:00 AM – 9:00 PM", "Friday: 10:00 AM – 10:00 PM", "Saturday: 10:00 AM – 10:00 PM", "Sunday: 11:00 AM – 9:00 PM"]
+    var place: Place?
+    
     var body: some View {
-        VStack{
-            placeHero
+        ScrollView {
+            VStack{
+                placeHero
+                placeType
+                workingHours
+            }
         }
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height, alignment: .leading)
-        .padding()
+        .frame(maxWidth: .infinity)
+        .background(Color.gray.opacity(0.2))
     }
 }
 
@@ -20,16 +27,41 @@ struct PlaceDetailView_Previews: PreviewProvider {
 //Components
 extension PlaceDetailView{
     var placeHero: some View{
-        VStack(alignment: .leading, spacing: 15){
-            Text("Place Name")
+        VStack{
+            Text(place?.name ?? "Title")
                 .font(.title)
                 .bold()
-            Text("place description")
-            HStack {
-                Image(systemName: "location.fill.viewfinder")
-                    .font(.title2)
-                Text("PlaceCode")
+            VStack{
+                Text(place?.address ?? "Addres")
+                HStack {
+                    Image(systemName: "location.fill.viewfinder")
+                        .font(.title2)
+                    Text(place?.plusCode ?? "")
+                }
             }
+            Text("Phone Number: \(place?.phoneNumber ?? "")")
+            Text("webisite: link")
+        }
+    }
+    
+    var workingHours: some View{
+        VStack{
+            Text("Working hours")
+                .font(.title)
+                .bold()
+            
+            ForEach(place?.weekdays ?? [], id: \.self) { day in
+                Text(day)
+            }
+        }
+    }
+    
+    var placeType: some View{
+        VStack{
+            Text("Type")
+                .font(.title)
+                .bold()
+            Text("Types")
         }
     }
 }

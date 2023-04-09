@@ -4,6 +4,7 @@ import CoreLocation
 
 protocol ResultsViewControllerDelegate: AnyObject{
     func didTapPlace(with coordinate: CLLocationCoordinate2D)
+    func presentBottomSheet(place:Place)
 }
 
 class ResultsViewController: UIViewController {
@@ -55,8 +56,8 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource{
             switch result {
             case .success(let place):
                 DispatchQueue.main.async {
-                    print(place)
                     self?.delegate?.didTapPlace(with: place.coordinate ?? CLLocationCoordinate2D(latitude: .infinity, longitude: .infinity))
+                    self?.delegate?.presentBottomSheet(place: place)
                 }
             case .failure(let error):
                 print(error)
