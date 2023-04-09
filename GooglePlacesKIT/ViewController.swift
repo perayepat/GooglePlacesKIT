@@ -8,7 +8,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "+ PLACES +"
+        title = "PLACES +"
         view.addSubview(mapView)
         setSystemBar()
         //        searchVC.searchBar.backgroundColor = .secondarySystemBackground

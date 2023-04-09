@@ -53,9 +53,10 @@ extension ResultsViewController: UITableViewDelegate, UITableViewDataSource{
         let place = places[indexPath.row]
         GooglePlacesManager.shared.resolveLocation(for: place) { [weak self] result in
             switch result {
-            case .success(let coordinate):
+            case .success(let place):
                 DispatchQueue.main.async {
-                    self?.delegate?.didTapPlace(with: coordinate)
+                    print(place)
+                    self?.delegate?.didTapPlace(with: place.coordinate ?? CLLocationCoordinate2D(latitude: .infinity, longitude: .infinity))
                 }
             case .failure(let error):
                 print(error)
